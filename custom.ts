@@ -1,4 +1,6 @@
 declare module '*.png'{
-  const content: any;
-  export default content; 
-}
+  const contentJpg: any;
+  export default contentJpg; 
+};
+declare module '*.jpg'{
+};

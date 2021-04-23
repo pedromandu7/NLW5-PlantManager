@@ -8,7 +8,6 @@ import {
 } from "@expo-google-fonts/jost";
 import Welcome from "./src/screens/Welcome";
 import UserIndentification from "./src/screens/UserIndentification";
-import Comfirmation from "./src/screens/Comfirmation";
 import Routes from './src/routes';
 export default function App() {
   const [fontsLoaded] = useFonts({

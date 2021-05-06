@@ -6,7 +6,7 @@ import loadAnimation from "../../assets/loadRegar.json";
 import colors from "../../styles/colors";
 import fonts from "../../styles/font";
 
-const Header = () => {
+const Load = () => {
   return (
     <View style={styles.container}>
       <LottieView
@@ -31,4 +31,4 @@ const styles = StyleSheet.create({
     height: 200,
   },
 });
-export default Header;
+export default Load;

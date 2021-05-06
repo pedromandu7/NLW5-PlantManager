@@ -11,6 +11,7 @@ import EnviromentButtom from "../components/EnviromentButtom";
 import Header from "../components/Header";
 import PlantCardPrimary from "../components/PlantCardPrimary/index";
 import Load from "../components/Load";
+import { PlantProps } from '../libs/storage';
 
 import api from "../services/api";
 
@@ -22,38 +23,28 @@ interface EnviromentProps {
   title: string;
 }
 
-interface PlantProps {
-  id: 1;
-  name: string;
-  about: string;
-  water_tips: string;
-  photo: string;
-  environments: [string];
-  frequency: {
-    times: number;
-    repeat_every: string;
-  };
-}
 
-const PlantSelect = () => {
+
+const PlantSelect = ({ navigation }: any) => {
   const [enviroments, setEnvironments] = useState<EnviromentProps[]>();
   const [plants, setPlants] = useState<PlantProps[]>();
   const [filteredPlants, setFilteredPlants] = useState<PlantProps[]>();
   const [environmentSelected, setEnvironmentSelected] = useState("all");
-  const [loading, setLoading] = useState(true);
-
+  
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(true);
-  const [loadedAll, setLoadedAll] = useState(true);
 
   const handlerEnvironmentSelected = (environment: string) => {
     setEnvironmentSelected(environment);
+
+    if (environment == "all")  console.log(plants);
     if (environment == "all") return setFilteredPlants(plants);
 
     const filtered = plants?.filter((plant) =>
       plant.environments.includes(environment)
     );
-    console.log(filtered);
+    // console.log(filtered);
 
     setFilteredPlants(filtered);
   };
@@ -68,9 +59,9 @@ const PlantSelect = () => {
     }
 
     if (page >= 2) {
-      setPlants((oldValue) => [...oldValue, ...data]);
-      setFilteredPlants((oldValue) => [...oldValue, ...data]);
-      console.log(page); //test
+      setPlants((oldValue) => [...oldValue as any, ...data]);
+      setFilteredPlants((oldValue) => [...oldValue as any, ...data]);
+      console.log("ao recarregar page no PlantSelect    "+page); //test
     } else {
       setPlants(data);
       setFilteredPlants(data);
@@ -85,6 +76,12 @@ const PlantSelect = () => {
     setLoadingMore(true);
     setPage((oldValue) => oldValue + 1);
     fetchPlants();
+  };
+
+
+  const handlePlantSelect =(plant: PlantProps)=>{
+    // console.log('rodow');
+    navigation.navigate('PlantSave', { plant });
   };
 
   useEffect(() => {
@@ -121,8 +118,10 @@ const PlantSelect = () => {
       <View>
         <FlatList
           data={enviroments}
+          keyExtractor={(item) => String(item.key)}
           renderItem={({ item }) => (
             <EnviromentButtom
+              key={item.key}
               title={item.title}
               active={item.key === environmentSelected}
               onPress={() => handlerEnvironmentSelected(item.key)}
@@ -137,7 +136,14 @@ const PlantSelect = () => {
       <View style={styles.plants}>
         <FlatList
           data={filteredPlants}
-          renderItem={({ item }) => <PlantCardPrimary data={item} />}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => (
+            <PlantCardPrimary 
+            data={item} 
+            key={item.id}
+            onPress={()=>handlePlantSelect(item)}
+            />
+          )}
           numColumns={2}
           showsVerticalScrollIndicator={false}
           onEndReachedThreshold={0.1}

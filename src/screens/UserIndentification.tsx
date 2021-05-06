@@ -10,7 +10,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Entypo } from "@expo/vector-icons";
 
 import wateringImg from "../assets/watering.png";
@@ -35,40 +37,53 @@ const UserIndentification = ({ navigation }: any) => {
     setName(value);
   };
 
+  async function handleSubmit() {
+    if (!name) return Alert.alert("Me diz como chamar você 😥");
+    try {
+      await AsyncStorage.setItem("@plantmanager:user", name);
+      navigation.navigate("Confirmation", {
+        title: "Prontinho",
+        subtitle:
+          " Agora vamos começar a cuidar das suas plantinhas com muito cuidado.",
+        buttonTitle: "Começar",
+        icon: "smile",
+        nextScreen: "PlantSelect",
+      });
+    } catch {
+      Alert.alert("Não foi possivel salvar😥");
+    }
+  }
+
+  //  {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> não funciona no ios */}/
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.content}>
-            <View style={styles.form}>
-              <Text style={styles.emoji}>{!isFilled ? "😀" : "😄"}</Text>
-              {/* <Text style={styles.emoji}>😁</Text> */}
-              <Text style={styles.title}>
-                Como podemos{"\n"}
-                chamar você?
-              </Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  (isFilled || isFocused) && { borderColor: colors.green },
-                ]}
-                placeholder="Digite seu nome"
-                onBlur={handleInputBlur}
-                onFocus={handleInputFocus}
-                onChangeText={handleInputChange}
-              />
-              <View style={styles.button}>
-                <Button
-                  title="Confirmar"
-                  onPress={() => navigation.navigate("Confirmation")}
-                />
-              </View>
+        <View style={styles.content}>
+          <View style={styles.form}>
+            <Text style={styles.emoji}>{!isFilled ? "😀" : "😄"}</Text>
+            {/* <Text style={styles.emoji}>😁</Text> */}
+            <Text style={styles.title}>
+              Como podemos{"\n"}
+              chamar você?
+            </Text>
+            <TextInput
+              style={[
+                styles.input,
+                (isFilled || isFocused) && { borderColor: colors.green },
+              ]}
+              placeholder="Digite seu nome"
+              onBlur={handleInputBlur}
+              onFocus={handleInputFocus}
+              onChangeText={handleInputChange}
+            />
+            <View style={styles.button}>
+              <Button title="Confirmar" onPress={() => handleSubmit()} />
             </View>
           </View>
-        </TouchableWithoutFeedback>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

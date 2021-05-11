@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.heading,
     marginTop: 40,
+    lineHeight: 34,
   },
   subtitle: {
     fontSize: 16,
